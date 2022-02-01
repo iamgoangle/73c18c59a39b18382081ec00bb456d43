@@ -1,0 +1,29 @@
+{
+  "name": "73c18c59a39b18382081ec00bb456d43",
+  "version": "1.0.0",
+  "description": "hapi-transfer-json-structure",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "run": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamgoangle/73c18c59a39b18382081ec00bb456d43.git"
+  },
+  "author": "Teerapong, Singthong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iamgoangle/73c18c59a39b18382081ec00bb456d43/issues"
+  },
+  "homepage": "https://github.com/iamgoangle/73c18c59a39b18382081ec00bb456d43#readme",
+  "dependencies": {
+    "@hapi/hapi": "^20.2.1",
+    "@hapi/joi": "^17.1.1",
+    "hapi-pino": "^9.1.1",
+    "joi": "^17.6.0",
+    "joi-objectid": "^4.0.2",
+    "loglevel": "^1.8.0",
+    "pino-pretty": "^7.5.1"
+  }
+}

@@ -128,4 +128,4 @@ async function transformJsonHandler(request, h) {
   }
 }
 
-// service
+module.exports = start;

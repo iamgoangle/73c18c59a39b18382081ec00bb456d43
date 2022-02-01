@@ -25,5 +25,8 @@
     "joi-objectid": "^4.0.2",
     "loglevel": "^1.8.0",
     "pino-pretty": "^7.5.1"
+  },
+  "devDependencies": {
+    "jest": "^27.4.7"
   }
 }

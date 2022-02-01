@@ -1,7 +1,7 @@
 const Hapi = require("@hapi/hapi");
 const Joi = require("@hapi/joi");
 
-const handler = require("./handler.js");
+const jsonHandler = require("./api/json_transform.js");
 
 const server = Hapi.server({
   host: "localhost",
@@ -22,7 +22,7 @@ server.route({
 server.route({
   method: "POST",
   path: "/v1/transform/json",
-  handler: handler.jsonTransformer,
+  handler: jsonHandler.jsonTransformer,
   options: {
     validate: {
       payload: Joi.object().keys(), // validate: at least object is required

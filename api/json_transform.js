@@ -1,4 +1,4 @@
-const service = require("./service.js");
+const service = require("../service/service.js");
 
 const maxDepthLevel = 2;
 

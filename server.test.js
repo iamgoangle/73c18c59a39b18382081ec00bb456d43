@@ -109,6 +109,57 @@ describe("JSON Transform Handler", () => {
     expect(data.statusCode).toBe(400);
   });
 
+  it("should return a node without children", async () => {
+    const payload = {
+      0: [
+        {
+          id: 10,
+          title: "House",
+          level: 0,
+          children: [],
+          parent_id: null,
+        },
+      ],
+      1: [
+        {
+          id: 12,
+          title: "Red Roof",
+          level: 1,
+          children: [],
+          parent_id: 11,
+        },
+        {
+          id: 18,
+          title: "Blue Roof",
+          level: 1,
+          children: [],
+          parent_id: 11,
+        },
+      ],
+    };
+
+    const expectedResult = [
+      {
+        id: 10,
+        title: "House",
+        level: 0,
+        children: [],
+        parent_id: null,
+      },
+    ];
+
+    const options = {
+      method: "POST",
+      url: "/v1/transform/json",
+      payload: JSON.stringify(payload),
+    };
+
+    const data = await server.inject(options);
+
+    expect(data.statusCode).toBe(200);
+    expect(data.result).toStrictEqual(expectedResult);
+  });
+
   it("should get json organized structure sucessfully", async () => {
     const payload = {
       0: [

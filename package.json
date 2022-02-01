@@ -4,8 +4,9 @@
   "description": "hapi-transfer-json-structure",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "run": "node index.js"
+    "dev": "nodemon server.js",
+    "run": "node server.js",
+    "test": "jest --verbose"
   },
   "repository": {
     "type": "git",

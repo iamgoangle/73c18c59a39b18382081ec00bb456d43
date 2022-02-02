@@ -36,7 +36,20 @@ server.route({
   handler: jsonHandler.jsonTransformer,
   options: {
     validate: {
-      payload: Joi.object().keys(), // validate: at least object is required
+      // payload: Joi.object().keys(), // validate: at least object is required
+      payload: Joi.object()
+        .keys({
+          0: Joi.array().items(
+            Joi.object().keys({
+              id: Joi.number().integer(),
+              title: Joi.string(),
+              level: Joi.number().integer(),
+              children: Joi.array(),
+              parent_id: Joi.any(),
+            })
+          ),
+        })
+        .unknown(true),
     },
   },
 });

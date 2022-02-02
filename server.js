@@ -1,10 +1,12 @@
 const Hapi = require("@hapi/hapi");
 const Joi = require("@hapi/joi");
-const axios = require("axios");
 
 const jsonHandler = require("./api/json_transform.js");
+const githubHandler = require("./api/github.js");
 
 let totalGithubResultCount = 0;
+
+const HTTP_STATUS_OK = 200;
 
 const server = Hapi.server({
   host: "localhost",
@@ -12,6 +14,9 @@ const server = Hapi.server({
   debug: false,
 });
 
+/**
+ * Health handler
+ */
 server.route({
   method: "GET",
   path: "/health",
@@ -42,31 +47,7 @@ server.route({
 server.route({
   method: "GET",
   path: "/github/search",
-  handler: async (request, h) => {
-    const perPage = 10;
-    const defaultPage = 1;
-    const defaultSearch = "nodejs";
-    const githubLimitSearchCount = 1000 // https://docs.github.com/en/rest/reference/search
-
-    let q = request.query.q;
-    let page = request.query.page;
-    page = !page ? defaultPage : page;
-
-    let searchResultData;
-    let totalCount
-
-    searchResultData = await githubSearchClient(q, page);
-    
-    totalCount = (searchResultData.data.total_count > githubLimitSearchCount) ? githubLimitSearchCount : totalCount
-
-    return h.view("index.pug", {
-      query: q,
-      page: page,
-      limit: perPage,
-      total: totalCount,
-      items: searchResultData.data.items,
-    });
-  },
+  handler: githubHandler.githubHandler,
 });
 
 // Initiate the server
@@ -100,23 +81,5 @@ process.on("unhandledRejection", (err) => {
 });
 
 initServer();
-
-async function githubSearchClient(query, page) {
-  try {
-    const config = {
-      method: "get",
-      url: `https://api.github.com/search/repositories?q=${query}&per_page=10&page=${page}`,
-      headers: {
-        Accept: "application/vnd.github.v3+json",
-      },
-    };
-
-    const response = await axios.request(config);
-
-    return response;
-  } catch (e) {
-    console.error(error);
-  }
-}
 
 module.exports = server;

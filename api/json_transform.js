@@ -31,7 +31,7 @@ async function jsonTransformer(request, h) {
     parentElem.children = [...(parentElem.children || []), elem];
   });
 
-  return h.response(tree).code(200);
+  return h.response([tree]).code(200);
 }
 
 function flattenToArrays(input) {

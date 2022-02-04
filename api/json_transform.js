@@ -1,45 +1,46 @@
-const service = require("../service/service.js");
-
-const maxDepthLevel = 2;
-
 async function jsonTransformer(request, h) {
   let httpReqPayload = request.payload;
+  let flatDataToArray = flattenToArrays(httpReqPayload);
 
-  try {
-    request.logger.info("payload %s", JSON.stringify(httpReqPayload));
+  // create a mapping id
+  // represent hashmap of node and index
+  const mappingId = flatDataToArray.reduce((acc, elem, i) => {
+    acc[elem.id] = i;
+    return acc;
+  }, {});
 
-    let response = [];
-    let normalizeModel = [];
+  let tree = [];
+  flatDataToArray.forEach((elem) => {
+    if (elem.parent_id === null) {
+      // determine this is root
+      tree = elem;
 
-    normalizeModel = service.normalizeToArrObjectsModel(httpReqPayload);
-
-    let dataSetIsInvalid = (() => {
-      let findDataSetOverMaxRule = normalizeModel.filter(
-        (item) => item.level > maxDepthLevel
-      );
-
-      return findDataSetOverMaxRule.length > 0;
-    })();
-
-    if (dataSetIsInvalid) {
-      return h
-        .response(
-          `The dataset max depth level is invalid. We are limit ${maxDepthLevel} for depth level`
-        )
-        .code(400);
+      return;
     }
 
-    rootNode = service.determineRoot(normalizeModel)
-    rootNode = service.associateParentAndChildItems(rootNode, normalizeModel)
+    // lookup parent node in hashmap
+    // mappingId = return index of parent element
+    const parentElem = flatDataToArray[mappingId[elem.parent_id]];
+    if(!parentElem) {
+      return
+    }
 
-    response = rootNode
+    // using javascript object references to the address
+    // copy children or take current element to be child
+    // destructing 2 arrays exstis, and current element
+    parentElem.children = [...(parentElem.children || []), elem];
+  });
 
-    return h.response(response).code(200);
-  } catch (e) {
-    request.logger.error(e);
+  return h.response(tree).code(200);
+}
 
-    return;
+function flattenToArrays(input) {
+  let flattenHashToArrays = [];
+  for (let key in input) {
+    flattenHashToArrays.push(...input[key]);
   }
+
+  return flattenHashToArrays;
 }
 
 module.exports = {

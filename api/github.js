@@ -1,5 +1,7 @@
 const axios = require("axios");
 
+const HTTP_STATUS_OK = 200;
+
 async function githubHandler(request, h) {
   const perPage = 10;
   const defaultPage = 1;
@@ -15,7 +17,7 @@ async function githubHandler(request, h) {
   let searchResultData;
   let searchResultTotalCount;
 
-  searchResultData = await githubHandler.githubSearchClient(reqQuery, reqPage);
+  searchResultData = await githubSearchClient(reqQuery, reqPage);
 
   if (searchResultData.status === HTTP_STATUS_OK) {
     request.logger.info("fetch github api successfully");

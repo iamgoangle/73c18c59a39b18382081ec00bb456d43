@@ -1,12 +1,11 @@
 const Hapi = require("@hapi/hapi");
 const Joi = require("@hapi/joi");
+const Inert = require("@hapi/inert");
+const Vision = require("@hapi/vision");
+const HapiSwagger = require("hapi-swagger");
 
 const jsonHandler = require("./api/json_transform.js");
 const githubHandler = require("./api/github.js");
-
-let totalGithubResultCount = 0;
-
-const HTTP_STATUS_OK = 200;
 
 const server = Hapi.server({
   host: "localhost",
@@ -20,10 +19,15 @@ const server = Hapi.server({
 server.route({
   method: "GET",
   path: "/health",
-  handler: async (request, h) => {
-    const data = { message: "OK" };
+  options: {
+    description: "Health API",
+    notes: "Server Health Check Handler",
+    tags: ["api"],
+    handler: async (request, h) => {
+      const data = { message: "OK" };
 
-    return h.response(data).code(200);
+      return h.response(data).code(200);
+    },
   },
 });
 
@@ -36,18 +40,19 @@ server.route({
   handler: jsonHandler.jsonTransformer,
   options: {
     validate: {
-      // payload: Joi.object().keys(), // validate: at least object is required
       payload: Joi.object()
         .keys({
-          0: Joi.array().items(
-            Joi.object().keys({
-              id: Joi.number().integer(),
-              title: Joi.string(),
-              level: Joi.number().integer(),
-              children: Joi.array(),
-              parent_id: Joi.any(),
-            })
-          ),
+          0: Joi.array()
+            .items(
+              Joi.object().keys({
+                id: Joi.number().integer(),
+                title: Joi.string(),
+                level: Joi.number().integer(),
+                children: Joi.array(),
+                parent_id: Joi.any(),
+              })
+            )
+            .description("the first number"),
         })
         .unknown(true),
     },
@@ -61,6 +66,13 @@ server.route({
   method: "GET",
   path: "/github/search",
   handler: githubHandler.githubHandler,
+  options: {
+    validate: {
+      query: Joi.object({
+        q: Joi.string().required(),
+      }),
+    },
+  },
 });
 
 // Initiate the server
@@ -83,6 +95,20 @@ const initServer = async () => {
     relativeTo: __dirname,
     path: "views",
   });
+
+  await server.register([
+    Inert,
+    Vision,
+    {
+      plugin: HapiSwagger,
+      options: {
+        info: {
+          title: "API Documentation",
+          version: "0.0.1",
+        },
+      },
+    },
+  ]);
 
   await server.start();
   console.log("Server running on %ss", server.info.uri);

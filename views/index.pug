@@ -1,0 +1,46 @@
+doctype html
+html(lang="en")
+  head
+    title Github Project Searcher
+    style
+      include style.css
+  body
+    h1 Github Project Search
+
+    div.search-info 
+      b Search: 
+        em #{query}
+    div.search-info 
+      b Page: 
+        em #{page}
+    div.search-info
+      b Total Count: 
+        em #{total}
+
+    - var pageCount = total / limit;
+    - var n = 1
+    ul
+      while n < pageCount
+        li 
+          a(href=`?q=${query}&page=${n}`) #{n++}
+
+    #table-wrapper
+    table#desc
+      tr
+        th Search Result 
+      tr 
+        td Name 
+        td URL
+        td Owner
+        td Stars
+      each item in items   
+        tr 
+          td #{item.name}
+          td 
+            a(href=`${item.html_url}`) !{item.html_url}
+          td 
+            img.owner(src=`${item.owner.avatar_url}`)
+          td #{item.stargazers_count}
+    
+
+

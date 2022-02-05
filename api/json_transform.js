@@ -21,8 +21,8 @@ async function jsonTransformer(request, h) {
     // lookup parent node in hashmap
     // mappingId = return index of parent element
     const parentElem = flatDataToArray[mappingId[elem.parent_id]];
-    if(!parentElem) {
-      return
+    if (!parentElem) {
+      return;
     }
 
     // using javascript object references to the address
@@ -45,4 +45,5 @@ function flattenToArrays(input) {
 
 module.exports = {
   jsonTransformer,
+  flattenToArrays,
 };

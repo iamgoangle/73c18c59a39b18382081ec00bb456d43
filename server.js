@@ -8,7 +8,7 @@ const jsonHandler = require("./api/json_transform.js");
 const githubHandler = require("./api/github.js");
 
 const server = Hapi.server({
-  host: "localhost",
+  host: "0.0.0.0",
   port: 3000,
   debug: false,
 });
@@ -69,7 +69,8 @@ server.route({
   options: {
     validate: {
       query: Joi.object({
-        q: Joi.string().required(),
+        q: Joi.string().default("nodejs"),
+        page: Joi.string().default("1"),
       }),
     },
   },

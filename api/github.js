@@ -19,13 +19,13 @@ async function githubHandler(request, h) {
 
   searchResultData = await githubSearchClient(reqQuery, reqPage);
 
-  if (searchResultData.status === HTTP_STATUS_OK) {
-    request.logger.info("fetch github api successfully");
-  } else {
+  if (searchResultData.status !== HTTP_STATUS_OK) {
     return h
       .response(searchResultData.statusText)
       .code(searchResultData.status);
   }
+
+  request.logger.info("fetch github api successfully");
 
   searchResultTotalCount =
     searchResultData.data.total_count > githubLimitSearchCount
